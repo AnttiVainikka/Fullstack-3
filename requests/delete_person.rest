@@ -1,1 +1,1 @@
-DELETE http://localhost:3001/api/persons/1
+DELETE https://fullstack-3-hi3r.onrender.com/api/persons/1
