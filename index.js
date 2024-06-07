@@ -25,12 +25,14 @@ let persons = [
       }
 ]
 
+app.use(express.json())
+
 app.get('/', (request, response) => {
-  response.send('<h1>Phonebook</h1>')
+    response.send('<h1>Phonebook</h1>')
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+    response.json(persons)
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -53,11 +55,38 @@ app.get('/info', (request, response) => {
     </div>`)
   })
 
-  app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
     response.status(204).end()
   })
+
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+    console.log(body)
+    if (!body.name || !body.number) {
+        return response.status(400).json({ 
+            error: 'name and number required' 
+        })
+    }
+
+    if (persons.map(person => person.name).includes(body.name)) {
+        return response.status(400).json({
+            error: 'name is already in phonebook'
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.floor(Math.random() * 1000000)
+    }
+
+    persons = persons.concat(person)
+
+    response.json(person)
+    })
 
 const PORT = 3001
 app.listen(PORT, () => {
